@@ -22,16 +22,3 @@ export class PokemonModels {
     }
   }
 }
-
-
-/*
-const coger = new PokemonModels();
-
-coger.getPokemonMap()
-  .then(pokemonMap => {
-      console.log('Mapa de Pokémon:', pokemonMap);
-  })
-  .catch(error => {
-      console.error('Error:', error);
-  });
-*/
