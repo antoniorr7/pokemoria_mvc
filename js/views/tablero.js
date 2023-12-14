@@ -159,5 +159,3 @@ async initializeGame() {
     return array;
   }
 }
-
-let tablero = new Tablero();
