@@ -8,7 +8,8 @@ export class Tablero {
     this.pokemonPairs = [];
     this.dragDropInProgress = false;
     this.initializeGame();
-   
+    this.dragRequired = false;
+    this.cartasMesa=null;
 }
 async initializeGame() {
   this.datosPokemons = new PokemonModels();
@@ -56,13 +57,17 @@ async initializeGame() {
   generarCartas() {
     var gameContainer = document.getElementById('game-container');
     var cartasGeneradas = 0;
-  
+    var parejaLevantada = false;
     this.pokemonPairs.forEach((pokemon, index) => {
       if (cartasGeneradas < 10) {
         var div = document.createElement('div');
         div.className = 'card';
         div.dataset.index = index;
-        div.addEventListener('click', () => this.flipCard(index));
+        
+       
+          div.addEventListener('click', () => this.flipCard(index));
+       
+        
   
         var imgFront = document.createElement('img');
         imgFront.className = 'front';
@@ -106,15 +111,20 @@ async initializeGame() {
   }
   
   flipCard(index) {
+    // Check if a drag operation is required
+    if (this.dragRequired) {
+      return;
+    }
+
     // Verificar si se permite voltear cartas y no hay más de dos cartas ya volteadas
-    if (!this.isFlipping ) {
+    if (!this.isFlipping) {
       const card = document.querySelector(`.card[data-index="${index}"]:not(.correct)`);
-  
+
       // Verificar si la carta no es correcta, no está ya volteada y no se están volteando más de dos cartas
       if (card && !card.classList.contains('flipped') && this.selectedCards.length < 2) {
         card.classList.add('flipped');
         this.selectedCards.push({ index, pokemon: this.pokemonPairs[index] });
-  
+
         if (this.selectedCards.length === 2) {
           this.isFlipping = true; // Bloquear el volteo mientras se realiza la animación
           setTimeout(() => {
@@ -125,38 +135,50 @@ async initializeGame() {
       }
     }
   }
+
   
  
 
 
-  
-checkMatch() {
-  const [card1, card2] = this.selectedCards;
+  checkMatch() {
+    const [card1, card2] = this.selectedCards;
 
-  if (card1.pokemon.name === card2.pokemon.name) {
-    const matchedCards = document.querySelectorAll('.card.flipped');
-    matchedCards.forEach(card => {
-      card.classList.add('correct');
-      card.draggable = true; 
-      card.addEventListener('dragstart', (e) => this.dragStart(e));
-      card.addEventListener('dragend', () => this.dragEnd());
-      card.addEventListener('dragover', (e) => this.dragOver(e));
-      card.addEventListener('drop', (e) => this.drop(e));
-      
-    });
+    if (card1.pokemon.name === card2.pokemon.name) {
+      const matchedCards = document.querySelectorAll('.card.flipped');
+      matchedCards.forEach(card => {
+        card.classList.add('correct');
+        card.draggable = true;
+        card.addEventListener('dragstart', (e) => this.dragStart(e));
+        card.addEventListener('dragend', () => this.dragEnd());
+        card.addEventListener('dragover', (e) => this.dragOver(e));
+        card.addEventListener('drop', (e) => this.drop(e));
 
-    this.matchedPairs++;
+        // Set dragRequired to true when a pair is matched
+        this.dragRequired = true;
+      });
 
-    if (this.matchedPairs === this.totalCards / 2) {
-      // Implementa la lógica para cuando se hayan encontrado todas las parejas
+      this.matchedPairs++;
+
+      if (this.matchedPairs === this.totalCards / 2) {
+        // Implementa la lógica para cuando se hayan encontrado todas las parejas
+      }
+    } else {
+      const flippedCards = document.querySelectorAll('.card.flipped:not(.correct)');
+      flippedCards.forEach(card => card.classList.remove('flipped'));
     }
-  } else {
-    const flippedCards = document.querySelectorAll('.card.flipped:not(.correct)');
-    flippedCards.forEach(card => card.classList.remove('flipped'));
-  }
 
-  this.selectedCards = [];
-}
+    this.selectedCards = [];
+    this.comprobarVictoria();
+  }
+  comprobarVictoria() {
+    this.cartasMesa = document.getElementById("game-container");
+  
+    if (this.cartasMesa.childElementCount < 6 ) {
+      alert('Terminaste, Miguel. No busques más bugs, ¡esta joya está terminada!');
+    }
+  }
+  
+  
 
   dragStart(e) {
     e.dataTransfer.setData('text/plain', e.target.parentElement.dataset.index);
@@ -172,7 +194,6 @@ checkMatch() {
       e.preventDefault();
     }
   }
-
   drop(e) {
     e.preventDefault();
     if (this.dragDropInProgress) {
@@ -187,16 +208,18 @@ checkMatch() {
         if (draggedImage === dropTargetImage) {
           const gameContainer = document.getElementById('game-container');
           gameContainer.removeChild(draggedCard);
+
+          // Reset dragRequired after a successful drag operation
+          this.dragRequired = false;
         }
       }
     }
+    this.comprobarVictoria();
   }
 
-  
-    
+
   shuffleArray(array) {
-    // Implementar una función de mezcla (puedes encontrar algoritmos en línea)
-    // Aquí hay un ejemplo simple de mezcla de Fisher-Yates:
+
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
