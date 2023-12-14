@@ -105,27 +105,28 @@ async initializeGame() {
     });
   }
   
+  flipCard(index) {
+    // Verificar si se permite voltear cartas y no hay más de dos cartas ya volteadas
+    if (!this.isFlipping ) {
+      const card = document.querySelector(`.card[data-index="${index}"]:not(.correct)`);
   
-flipCard(index) {
-  // Verificar si se permite voltear cartas y no hay un drag and drop en curso
-  if (!this.isFlipping && !this.dragDropInProgress) {
-    const card = document.querySelector(`.card[data-index="${index}"]:not(.correct)`);
-
-    // Verificar si la carta no es correcta, no está ya volteada y no se están volteando más de dos cartas
-    if (card && !card.classList.contains('flipped') && this.selectedCards.length < 2) {
-      card.classList.add('flipped');
-      this.selectedCards.push({ index, pokemon: this.pokemonPairs[index] });
-
-      if (this.selectedCards.length === 2) {
-        this.isFlipping = true; // Bloquear el volteo mientras se realiza la animación
-        setTimeout(() => {
-          this.checkMatch();
-          this.isFlipping = false; // Liberar el bloqueo después de la comprobación
-        }, 1000);
+      // Verificar si la carta no es correcta, no está ya volteada y no se están volteando más de dos cartas
+      if (card && !card.classList.contains('flipped') && this.selectedCards.length < 2) {
+        card.classList.add('flipped');
+        this.selectedCards.push({ index, pokemon: this.pokemonPairs[index] });
+  
+        if (this.selectedCards.length === 2) {
+          this.isFlipping = true; // Bloquear el volteo mientras se realiza la animación
+          setTimeout(() => {
+            this.checkMatch();
+            this.isFlipping = false; // Liberar el bloqueo después de la comprobación
+          }, 1000);
+        }
       }
     }
   }
-}
+  
+ 
 
 
   
@@ -136,11 +137,12 @@ checkMatch() {
     const matchedCards = document.querySelectorAll('.card.flipped');
     matchedCards.forEach(card => {
       card.classList.add('correct');
-      card.draggable = true; // Habilitar arrastre solo en las cartas acertadas
+      card.draggable = true; 
       card.addEventListener('dragstart', (e) => this.dragStart(e));
       card.addEventListener('dragend', () => this.dragEnd());
       card.addEventListener('dragover', (e) => this.dragOver(e));
       card.addEventListener('drop', (e) => this.drop(e));
+      
     });
 
     this.matchedPairs++;
