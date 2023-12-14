@@ -104,9 +104,7 @@ async initializeGame() {
   }
 }
 
-
-
-  flipCard(index) {
+flipCard(index) {
     // Verificar si se permite voltear cartas
     if (!this.isFlipping) {
       const card = document.querySelector(`.card[data-index="${index}"]:not(.correct)`);
