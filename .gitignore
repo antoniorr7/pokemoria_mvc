@@ -1,0 +1,12 @@
+# Node.js
+node_modules/
+npm-debug.log
+
+# ESLint
+.eslintcache
+
+# Otros archivos generados
+*.log
+*.txt
+*.json
+*.eslintrc.js
