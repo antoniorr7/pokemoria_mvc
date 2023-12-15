@@ -1,17 +1,66 @@
 import { PokemonModels } from '../models/mjuego.js'
-
+/**
+ * Clase que representa el tablero del juego de memoria de Pokémon.
+ * @class
+ */
 export class Tablero {
-  constructor () {
-    this.totalCards = 10
-    this.selectedCards = []
-    this.matchedPairs = 0
-    this.pokemonPairs = []
-    this.dragDropInProgress = false
-    this.initializeGame()
-    this.dragRequired = false
-    this.cartasMesa = null
+   /**
+   * Constructor de la clase Tablero.
+   * Inicializa las propiedades y llama al método para inicializar el juego.
+   * @constructor
+   */
+   constructor() {
+    /**
+     * Número total de cartas en el tablero.
+     * @type {number}
+     */
+    this.totalCards = 10;
+
+    /**
+     * Array que almacena las cartas seleccionadas.
+     * @type {Array}
+     */
+    this.selectedCards = [];
+
+    /**
+     * Número de pares de Pokémon que se han emparejado.
+     * @type {number}
+     */
+    this.matchedPairs = 0;
+
+    /**
+     * Array que contiene las parejas de Pokémon en el juego.
+     * @type {Array}
+     */
+    this.pokemonPairs = [];
+
+    /**
+     * Indica si está en progreso una operación de arrastrar y soltar.
+     * @type {boolean}
+     */
+    this.dragDropInProgress = false;
+
+    /**
+     * Indica si se requiere arrastrar para continuar el juego.
+     * @type {boolean}
+     */
+    this.dragRequired = false;
+
+    /**
+     * Elemento contenedor de las cartas en el tablero.
+     * @type {HTMLElement}
+     */
+    this.cartasMesa = null;
+
+    // Inicializa el juego.
+    this.initializeGame();
   }
 
+/**
+   * Inicializa el juego recuperando datos de Pokémon y configurando el tablero.
+   * @method
+   * @async
+   */
   async initializeGame () {
     this.datosPokemons = new PokemonModels()
 
@@ -35,7 +84,12 @@ export class Tablero {
       console.error('Error inicializando el juego:', error)
     }
   }
-
+  /**
+   * Selecciona Pokémon al azar del conjunto de Pokémon disponibles.
+   * @method
+   * @param {number} numPokemons - Número de Pokémon a seleccionar.
+   * @returns {Array} - Array de Pokémon seleccionados al azar.
+   */
   selectRandomPokemons (numPokemons) {
     const selectedPokemons = []
 
@@ -53,7 +107,10 @@ export class Tablero {
 
     return selectedPokemons
   }
-
+/**
+   * Genera las cartas en el tablero.
+   * @method
+   */
   generarCartas () {
     const gameContainer = document.getElementById('game-container')
     let cartasGeneradas = 0
@@ -83,7 +140,10 @@ export class Tablero {
       }
     })
   }
-
+/**
+   * Muestra las imágenes en la barra de pares.
+   * @method
+   */
   ImagenesBarra () {
     const pairsBar = document.getElementById('pairs-bar')
 
@@ -105,7 +165,11 @@ export class Tablero {
       pairsBar.appendChild(pairElement)
     })
   }
-
+/**
+   * Voltea una carta en el tablero.
+   * @method
+   * @param {number} index - Índice de la carta en el array de cartas.
+   */
   flipCard (index) {
     // Check if a drag operation is required
     if (this.dragRequired) {
@@ -131,7 +195,10 @@ export class Tablero {
       }
     }
   }
-
+ /**
+   * Comprueba si las cartas seleccionadas coinciden.
+   * @method
+   */
   checkMatch () {
     const [card1, card2] = this.selectedCards
 
@@ -162,7 +229,10 @@ export class Tablero {
     this.selectedCards = []
     this.comprobarVictoria()
   }
-
+/**
+   * Comprueba si todas las parejas se han encontrado y ejecuta la lógica de finalización del juego.
+   * @method
+   */
   comprobarVictoria () {
     this.cartasMesa = document.getElementById('game-container')
 
@@ -170,22 +240,37 @@ export class Tablero {
       alert('Terminaste, Miguel. No busques más bugs, ¡esta joya está terminada!')
     }
   }
-
+ /**
+   * Maneja el evento de inicio de arrastrar una carta.
+   * @method
+   * @param {DragEvent} e - Evento de arrastre.
+   */
   dragStart (e) {
     e.dataTransfer.setData('text/plain', e.target.parentElement.dataset.index)
     this.dragDropInProgress = true
   }
-
+/**
+   * Maneja el evento de finalización de arrastrar una carta.
+   * @method
+   */
   dragEnd () {
     this.dragDropInProgress = false
   }
-
+/**
+   * Maneja el evento de estar encima de una carta durante un arrastre.
+   * @method
+   * @param {DragEvent} e - Evento de arrastre.
+   */
   dragOver (e) {
     if (this.dragDropInProgress) {
       e.preventDefault()
     }
   }
-
+/**
+   * Maneja el evento de soltar una carta durante un arrastre.
+   * @method
+   * @param {DragEvent} e - Evento de arrastre.
+   */
   drop (e) {
     e.preventDefault()
     if (this.dragDropInProgress) {
@@ -208,7 +293,12 @@ export class Tablero {
     }
     this.comprobarVictoria()
   }
-
+ /**
+   * Baraja un array utilizando el algoritmo de Fisher-Yates.
+   * @method
+   * @param {Array} array - Array a ser barajado.
+   * @returns {Array} - Array barajado.
+   */
   shuffleArray (array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
