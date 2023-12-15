@@ -57,7 +57,7 @@ export class Tablero {
   generarCartas () {
     const gameContainer = document.getElementById('game-container')
     let cartasGeneradas = 0
-    
+
     this.pokemonPairs.forEach((pokemon, index) => {
       if (cartasGeneradas < 10) {
         const div = document.createElement('div')

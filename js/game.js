@@ -2,9 +2,10 @@ import { Tablero } from './views/tablero.js'
 
 export class Game {
   constructor () {
-   this.game = null
+    this.game = null
   }
-  iniciar(){
+
+  iniciar () {
     this.game = new Tablero()
   }
 }
